@@ -1,0 +1,25 @@
+# Local secrets and state
+.env
+.env.*
+!.env.example
+.login_guard_state.json
+.login_guard_state.tmp
+.login_guard_monitor.lock
+
+# Private runtime data
+photos/
+*.log*
+
+# Python environments and generated files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
