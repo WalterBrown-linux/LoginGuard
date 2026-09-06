@@ -118,3 +118,7 @@ Alerts intentionally contain user/computer identifiers, approximate IP location 
 `.gitignore` excludes real configuration, photos, logs, virtual environments, editor settings, key files and common backups. Share only Git-tracked source files; never upload a whole working folder or force-add ignored files. Installed `/etc` configuration and `/var/lib/login-guard-*` state are private and must not be bundled. Rotate any credentials previously shared through archives, messages or repositories; deleting a local copy does not revoke them.
 
 To stop services, use `systemctl --user disable --now login-guard.service` and, if installed, `sudo systemctl disable --now login-guard-sms.service login-guard-recovery.service`. Restore a locked account before removing its helper or state.
+
+## License
+
+This Linux Mint implementation is covered by the repository's [MIT License](../LICENSE), including its existing copyright notice. Dependencies retain their own licenses.

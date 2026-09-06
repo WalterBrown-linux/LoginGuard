@@ -251,4 +251,4 @@ The unit tests mock email, camera, and operating-system actions; they do not sen
 
 ## License
 
-LoginGuard is released under the [MIT License](LICENSE).
+Both the Windows and Linux Mint implementations are released under the [MIT License](LICENSE).
