@@ -1,6 +1,6 @@
 # LoginGuard
 
-LoginGuard is a small Windows-focused Python utility that sends an email when it starts. It can optionally attach a webcam image, include coarse public-IP location information, send a second message through an email-to-SMS gateway, and monitor a mailbox for signed remote actions.
+LoginGuard is a small Python utility that sends an email when it starts. It can optionally attach a webcam image, include coarse public-IP location information, send a second message through an email-to-SMS gateway, and monitor a mailbox for signed remote actions.
 
 In the Windows implementation, privacy-sensitive and remote-control features are **disabled by default**. The minimum configuration sends only a login alert email.
 
