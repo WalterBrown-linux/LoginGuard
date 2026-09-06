@@ -1,0 +1,8 @@
+* text=auto
+*.sh text eol=lf
+*.py text eol=lf
+*.service text eol=lf
+login-guard-account text eol=lf
+restore-account text eol=lf
+*.bat text eol=crlf
+*.vbs text eol=crlf

@@ -1,0 +1,20 @@
+[Unit]
+Description=LoginGuard Twilio SMS command monitor
+Wants=network-online.target
+After=network-online.target login-guard-recovery.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/lib/login-guard/login_guard_sms.py
+Restart=always
+RestartSec=15
+User=root
+Group=root
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=true
+ReadWritePaths=/var/lib/login-guard-sms /var/lib/login-guard-recovery
+
+[Install]
+WantedBy=multi-user.target

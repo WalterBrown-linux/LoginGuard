@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /usr/local/sbin/login-guard-account unlock "$(cat /etc/login-guard-target)"

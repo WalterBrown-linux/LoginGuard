@@ -2,7 +2,36 @@
 
 LoginGuard is a small Windows-focused Python utility that sends an email when it starts. It can optionally attach a webcam image, include coarse public-IP location information, send a second message through an email-to-SMS gateway, and monitor a mailbox for signed remote actions.
 
-Privacy-sensitive and remote-control features are **disabled by default**. The minimum configuration sends only a login alert email.
+In the Windows implementation, privacy-sensitive and remote-control features are **disabled by default**. The minimum configuration sends only a login alert email.
+
+## Choose your platform
+
+| Platform | Implementation and setup |
+| --- | --- |
+| Windows 10/11 | Use the files at the repository root and the instructions below. Existing Windows behavior and signed commands are unchanged. |
+| Linux Mint with systemd | Use the separate [`linux-mint/` implementation and step-by-step guide](linux-mint/README.md), including optional account recovery and Twilio SMS services. |
+
+The variants have separate configuration and command formats. Windows uses signed, expiring commands with privacy features off by default. The Linux Mint variant uses sender checks plus a plaintext shared secret and enables photo/location alerts and email command polling by default. Do not copy credentials or command subjects between variants.
+
+Neither implementation requires a private relay or Google Cloud server. Each runs on the computer being protected and uses the configured service providers directly. Supply your own mail credentials, optional tokens, and (for Linux SMS) Twilio resources. If you add a custom server integration, provision your own server/cloud resources and use your own IP addresses and credentials; no personal infrastructure access is included.
+
+### Linux Mint quick start
+
+Run these commands on the Linux Mint computer, not in Windows PowerShell:
+
+```sh
+sudo apt update
+sudo apt install git python3 python3-venv python3-pip libgl1 libglib2.0-0
+git clone https://github.com/WalterBrown-linux/LoginGuard.git
+cd LoginGuard/linux-mint
+bash setup_linux.sh
+cp .env.example .env
+chmod 600 .env
+```
+
+Edit `.env` with your own mailbox, app password, alert destination, allowed sender and unique command secret; the [Linux settings table](linux-mint/README.md#2-configure-login-alerts) explains every field. Then run `bash start_login_guard.sh`. After checking the alert, run `bash install_linux_autostart.sh` to enable startup with your desktop session. Follow the Linux guide before enabling account lockout/recovery or Twilio commands, and keep an alternate administrator login available.
+
+The remaining instructions on this page apply to **Windows**.
 
 ## Important safety notes
 
@@ -222,4 +251,4 @@ The unit tests mock email, camera, and operating-system actions; they do not sen
 
 ## License
 
-LoginGuard is released under the [MIT License](LICENSE).
+Both the Windows and Linux Mint implementations are released under the [MIT License](LICENSE).

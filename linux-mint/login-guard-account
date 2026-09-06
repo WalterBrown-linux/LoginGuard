@@ -1,0 +1,92 @@
+#!/usr/bin/python3
+"""Root-only, fixed-scope account lock and recovery helper."""
+
+import json
+import os
+import pwd
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+
+TARGET_USER = Path("/etc/login-guard-target").read_text(encoding="utf-8").strip()
+if not TARGET_USER or TARGET_USER == "root":
+    raise RuntimeError("Configure a non-root target account")
+STATE_DIR = Path("/var/lib/login-guard-recovery")
+STATE_FILE = STATE_DIR / f"{TARGET_USER}-state.json"
+
+
+def run(*args):
+    subprocess.run(list(args), check=True)
+
+
+def shadow_fields(username):
+    for line in Path("/etc/shadow").read_text(encoding="utf-8").splitlines():
+        fields = line.split(":")
+        if fields[0] == username:
+            return fields
+    raise RuntimeError(f"No shadow entry for {username}")
+
+
+def lock_account():
+    fields = shadow_fields(TARGET_USER)
+    STATE_DIR.mkdir(mode=0o700, parents=True, exist_ok=True)
+    if not STATE_FILE.exists():
+        state = {
+            "password_was_locked": fields[1].startswith("!"),
+            "expire_field": fields[7],
+        }
+        STATE_FILE.write_text(json.dumps(state), encoding="utf-8")
+        os.chmod(STATE_FILE, 0o600)
+
+    if not fields[1].startswith("!"):
+        run("/usr/sbin/usermod", "-L", TARGET_USER)
+    run("/usr/bin/chage", "-E", "1", TARGET_USER)
+
+    unit = f"login-guard-terminate-{TARGET_USER}-{int(time.time())}"
+    run(
+        "/usr/bin/systemd-run",
+        f"--unit={unit}",
+        "--on-active=3s",
+        "/usr/bin/loginctl",
+        "terminate-user",
+        TARGET_USER,
+    )
+
+
+def unlock_account():
+    state = {
+        "password_was_locked": False,
+        "expire_field": "",
+    }
+    if STATE_FILE.exists():
+        state.update(json.loads(STATE_FILE.read_text(encoding="utf-8")))
+
+    expire = state["expire_field"] or "-1"
+    run("/usr/bin/chage", "-E", expire, TARGET_USER)
+    if not state["password_was_locked"]:
+        fields = shadow_fields(TARGET_USER)
+        if fields[1].startswith("!"):
+            run("/usr/sbin/usermod", "-U", TARGET_USER)
+    if STATE_FILE.exists():
+        STATE_FILE.unlink()
+
+
+def main():
+    if os.geteuid() != 0:
+        raise SystemExit("This helper must run as root")
+    if len(sys.argv) != 3 or sys.argv[2] != TARGET_USER:
+        raise SystemExit("Usage: login-guard-account lock|unlock <configured-user>")
+    pwd.getpwnam(TARGET_USER)
+
+    if sys.argv[1] == "lock":
+        lock_account()
+    elif sys.argv[1] == "unlock":
+        unlock_account()
+    else:
+        raise SystemExit("Action must be lock or unlock")
+
+
+if __name__ == "__main__":
+    main()
