@@ -37,8 +37,19 @@ def send_sms_test():
         server.login(email_user, email_app_password)
         server.send_message(msg)
 
-    print(f"Sent SMS test email to: {sms_to}")
-
-
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Send one LoginGuard SMS-gateway test email"
+    )
+    parser.add_argument(
+        "--send",
+        action="store_true",
+        help="required acknowledgement that this command sends a real message",
+    )
+    args = parser.parse_args()
+    if not args.send:
+        parser.error("No message sent. Re-run with --send after checking .env.")
+
     send_sms_test()
