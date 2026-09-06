@@ -1,0 +1,20 @@
+[Unit]
+Description=LoginGuard independent account recovery monitor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/lib/login-guard/login_guard_recovery.py
+Restart=always
+RestartSec=15
+User=root
+Group=root
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=true
+ReadWritePaths=/var/lib/login-guard-recovery
+
+[Install]
+WantedBy=multi-user.target

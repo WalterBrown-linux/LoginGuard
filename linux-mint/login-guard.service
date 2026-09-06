@@ -1,0 +1,14 @@
+[Unit]
+Description=LoginGuard login alert and remote command monitor
+After=network-online.target graphical-session.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/LoginGuard
+ExecStart=/LoginGuard/.venv-linux/bin/python /LoginGuard/login_guard.py
+Restart=on-failure
+RestartSec=15
+
+[Install]
+WantedBy=default.target
